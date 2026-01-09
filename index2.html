@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wood Frame</title>
+<link rel="icon" href="11zon_cropped.png" type="image/png">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+  scroll-behavior:smooth;
+}
+
+body{
+  background:black;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* NAV */
+.navbar{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 30px;
+  background:rgba(0,0,0,0.9);
+  z-index:100;
+}
+
+.marca{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.marca img{width:40px;}
+
+.navbar ul{
+  list-style:none;
+  display:flex;
+  gap:20px;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+/* SECCIONES */
+section{
+  min-height:100vh;
+  padding:120px 60px 60px;
+  display:flex;
+  align-items:center;
+}
+
+/* ANIMACIONES CORREGIDAS */
+.animar {
+  opacity: 0;
+  transform: translateY(120px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+    display: block;        /* Asegura que ocupe toda la línea */
+    margin-bottom: 1rem;   /* Separa un párrafo del siguiente */
+    line-height: 1.6;      /* Da aire entre líneas del mismo párrafo */
+}
+.animar strong {
+    display: block;       /* Hace que la pregunta salte a su propia línea */
+    margin-bottom: 5px;   /* Espacio pequeño entre pregunta y respuesta */
+}
+/* Estilo general para los párrafos */
+p.animar {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 20px; /* Esto quita lo "pegado" */
+    color: #ffffff;         /* O el color que prefieras */
+}
+
+/* Estilo para el título */
+h2.animar {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    margin-top: -40px;
+}
+
+
+/* Esta clase se añade con JS cuando el elemento es visible */
+.animar.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* INICIO */
+.inicio{gap:300px;}
+.imagen img{width:500px; max-width: 100%;}
+
+/* PRODUCTOS / PLANOS */
+.productos, .planos{
+  flex-direction:column;
+  text-align:center;
+  gap:30px;
+}
+
+.productos-grid{
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap:30px;
+}
+
+.producto{
+  background:#111;
+  padding:20px;
+  width:380px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.producto img{
+  width:100%;
+  margin-bottom:10px;
+  
+}
+
+/* CHAT */
+@keyframes aparecerMensaje {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.msg {
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  /* Aplicamos la animación */
+  animation: aparecerMensaje 0.3s ease forwards;
+  position: relative;
+}
+
+/* Opcional: efecto de burbuja para el bot */
+.bot { 
+  background: #333; 
+  align-self: flex-start; 
+  border-bottom-left-radius: 2px; /* Estilo de burbuja de chat */
+}
+
+/* Opcional: efecto de burbuja para el usuario */
+.user { 
+  background: #0b4406; 
+  align-self: flex-end; 
+  border-bottom-right-radius: 2px;
+}
+#chat-toggle{display:none;}
+
+.chat-boton{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  width:50px;
+  height:50px;
+  background:#0b4406;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:200;
+  font-size: 24px;
+}
+
+.chat-caja{
+  position:fixed;
+  bottom:85px;
+  right:25px;
+  width:300px;
+  background:#1a1a1a;
+  border: 1px solid #c49a6c;
+  border-radius:10px;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(20px);
+  pointer-events:none;
+  transition:0.3s ease;
+  z-index:200;
+}
+
+#chat-toggle:checked ~ .chat-caja{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.chat-header{
+  background:#c49a6c;
+  color:black;
+  padding:12px;
+  font-weight:bold;
+}
+
+.msg {
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 85%;      /* Evita que toque el borde derecho */
+    word-wrap: break-word; /* Rompe palabras largas si es necesario */
+    overflow-wrap: break-word; /* Estándar moderno 2026 para evitar desbordes */
+    white-space: pre-wrap; /* Mantiene saltos de línea sin salirse */
+    display: inline-block; /* Ajusta el ancho al contenido */
+    line-height: 1.4;
+}
+
+.chat-body {
+    padding: 15px;
+    height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Evita el scroll horizontal si el texto es largo */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.user { background: #0b4406; align-self: flex-end; }
+.bot { background: #333; align-self: flex-start; }
+
+.chat-input{
+  display:flex;
+  border-top:1px solid #333;
+}
+
+.chat-input input{
+  flex:1;
+  padding:10px;
+  border:none;
+  outline:none;
+  background: #222;
+  color: white;
+}
+
+.chat-input button{
+  padding:10px 15px;
+  border:none;
+  background:#c49a6c;
+  cursor:pointer;
+  font-weight: bold;
+}
+.btn-comprar {
+  background: #c49a6c;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+  transition: 0.3s;
+}
+.btn-comprar:hover { background: #e0b484; }
+
+/* MODAL LINDO */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(5px);
+  display: none; /* Oculto por defecto */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #1a1a1a;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 2px solid #c49a6c;
+  position: relative;
+  animation: modalEntrada 0.4s ease;
+}
+
+@keyframes modalEntrada {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h2 { color: #c49a6c; margin-bottom: 15px; }
+.modal-content p { font-size: 1.1rem; margin-bottom: 25px; line-height: 1.6; }
+
+.btn-whatsapp {
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+.btn-whatsapp:hover { transform: scale(1.05); background: #20ba5a; }
+
+.cerrar-modal {
+  position: absolute;
+  top: 15px; right: 15px;
+  background: none; border: none;
+  color: white; font-size: 20px; cursor: pointer;
+}
+.producto:hover { border-color: #c49a6c; transform: translateY(-15px); }
+.producto img{ width:100%; border-radius: 8px; margin-bottom:15px; }
+.sobre {
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    justify-content: space-between; /* Espacia los elementos */
+    flex-direction: row-reverse; /* Mueve el segundo div (texto) a la izquierda */
+    gap: 40px; /* Espacio entre imagen y texto */
+}
+
+.sobre .texto {
+    flex: 1;
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.sobre .imagen {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.sobre .imagen img {
+    max-width: 100%;
+    height: auto;
+}
+
+.ju {
+    color: white;
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    margin-left: -240px; /* Ajusta este número según necesites */
+}
+.jul{
+  color: white;
+  font-size: 2.5rem;
+}
+  .mision {
+    color: white;
+  }
+  
+
+.animara h2 {
+    margin-bottom: 20px;       /* Espacio entre el título y el texto */
+    font-size: 2.5rem;
+    margin-top: -1500;
+}
+
+.animaras p {
+    text-align: center;        /* Asegura que cada párrafo esté centrado */
+    margin-bottom: 15px;       /* Espacio entre los dos párrafos de la misión */
+    max-width: 600px;          /* Limita el ancho del texto para mejor legibilidad */
+}
+/* Título Principal */
+
+
+/* Contenedor de cada bloque pregunta/respuesta */
+
+
+/* Estilo de las Preguntas */
+.pregunta {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    margin-bottom: 10px; /* Espacio corto hacia su respuesta */
+    display: block;
+}
+
+/* Estilo de las Respuestas */
+
+
+/* Tu clase de animación base (se mantiene) */
+.animar {
+    opacity: 0;
+    transform: translateY(30px); /* Reduje de 120px a 30px para un efecto más elegante */
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Clase para activar la animación (usualmente disparada por JS) */
+.animar.aparecer {
+    opacity: 1;
+    transform: translateY(0);
+}
+.animara {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Centra el título y el bloque de preguntas */
+    text-align: center;
+    max-width: 900px;       /* Un poco más ancho para las preguntas */
+    margin: 0 auto;
+    padding: 50px 20px;     /* Espaciado interno para que no toque los bordes */
+}
+
+/* Forzamos que el título siempre ocupe el ancho completo para centrarse bien */
+.titulo-seccion {
+    width: 100%;
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    margin-top: -80px;    /* Espacio fijo entre el título y la primera pregunta */
+    display: block;
+}
+
+/* El contenedor de preguntas mantiene el orden sin importar cuántas haya */
+.animaras {
+    width: 100%;            /* Ocupa el ancho de .animara */
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Mantiene las preguntas centradas */
+}
+
+.pregunta-item {
+    margin-bottom: 40px;
+    width: 100%;            /* Permite que el texto se distribuya bien */
+}
+
+/* Estilo de texto para las respuestas */
+p.respuesta {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #cccccc;
+    margin: 0 auto;         /* Centra el párrafo si tiene un max-width */
+    max-width: 700px;
+}
+#planos .producto {
+  width: 420px;       /* Aumentamos de 380px a 550px (ajusta a tu gusto) */
+  padding: 10px;      /* Menos relleno para que la imagen luzca más grande */
+}
+
+/* Solo afecta a las imágenes de los Planos */
+#planos .producto img {
+  width: 100%;        /* Se expande al nuevo ancho de 550px */
+  border-radius: 4px; /* Un borde más fino para planos técnicos */
+}
+
+/* Opcional: Si quieres que en pantallas pequeñas no se desborde */
+@media (max-width: 600px) {
+  #planos .producto {
+    width: 90%;
+  }
+}
+#planos .imagen {
+  width: 100%;
+}
+.footer-sitio {
+  background-color: #0a0a0a; /* Negro profundo para que contraste con el fondo anterior */
+  color: #ffffff;
+  padding: 50px 20px;
+  margin-top: -80px; /* Separa el footer de la última sección de imágenes */
+  border-top: 1px solid #333;
+}
+
+.footer-contenido {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 30px;
+}
+
+.footer-seccion {
+  flex: 1;
+  min-width: 250px; /* Evita que se amontonen en móviles */
+  text-align: center;
+}
+
+.footer-seccion h3 {
+  color: #c49a6c; /* Color dorado/madera para combinar con tus marcos */
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.footer-seccion p {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin: 5px 0;
+}
+
+.footer-seccion a {
+  color: #fff;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-seccion a:hover {
+  color: #c49a6c;
+}
+
+/* Responsivo para celulares */
+@media (max-width: 768px) {
+  .footer-contenido {
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer-seccion {
+    text-align: center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="marca">
+    <img src="11zon_cropped.png" alt="Logo">
+    <h1>WOOD FRAME</h1>
+  </div>
+  <ul>
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#sobre">Sobre Nosotros</a></li>
+    <li><a href="#productos">Diseños</a></li>
+    <li><a href="#preguntas">Preguntas Frecuentes</a></li>
+    <li><a href="#planos">Planos</a></li>
+  </ul>
+</nav>
+
+<section id="inicio" class="inicio">
+  <div class="imagen animar">
+    <img src="Bambu.png" alt="Bambu">
+  </div>
+  <div class="texto animar">
+    <h1 class="ju">"La calidad de la naturaleza al alcance de la vista"</h1>
+  </div>
+</section>
+
+<section id="sobre" class="sobre">
+  <!-- El navegador leerá esto primero, pero el CSS lo pondrá a la derecha -->
+  <div class="imagen animar">
+    <img src="2025-11-14_15.57.45.png" alt="Bambu">
+  </div>
+
+  <!-- Este div se verá a la izquierda gracias al row-reverse -->
+  <div class="texto animar">
+    <h1 class="jul">Nuestra Misión y Visión</h1>
+    <p class="mision">Nuestra misión es desarrollar marcos de lentes biodegradables en madera de bambú mediante corte láser, ofreciendo una alternativa sostenible.</p>
+    <p class="mision">Para 2030 buscamos ser líderes en la fabricación de marcos ecológicos funcionales.</p>
+    <h1 class="jul">Objetivo General</h1>
+    <p class="mision">Buscamos reducir las 250 toneladas de plástico que genera la industria óptica anualmente usando materiales biodegradables</p>
+  </div>
+</section>
+
+<section id="productos" class="productos">
+  <h2 class="animar">Diseños de los marcos</h2>
+  <div class="productos-grid">
+    <div class="producto animar">
+      <img src="images (1).jpeg">
+      <p>Marco Clásico</p>
+      <button class="btn-comprar" onclick="abrirModal('Bamboo Classic')">Comprar</button>
+    </div>
+    <div class="producto animar">
+      <img src="htb1_39gulmwbunksndvq6asapxaw.jpg">
+      <p>Marco Personalizado</p>
+      <button class="btn-comprar" onclick="abrirModal('Bamboo Urban')">Comprar</button>
+    </div>
+    <div class="producto animar">
+      <img src="images.jpeg">
+      <p>Marco Minimalista</p>
+      <button class="btn-comprar" onclick="abrirModal('Bamboo Light')">Comprar</button>
+    </div>
+  </div>
+</section>
+
+<section id="preguntas" class="preguntas">
+  <div class="animara">
+    <!-- El título se mantiene arriba y centrado -->
+    <h2 class="animar titulo-seccion">Preguntas Frecuentes</h2>
+    
+    <!-- Este contenedor agrupa todas las preguntas -->
+    <div class="animaras">
+      <div class="pregunta-item">
+        <h3 class="animar pregunta">¿Cuánto tiempo tiene de garantía el marco?</h3>
+        <p class="animar respuesta">Aproximadamente dos años, gracias al aceite de linaza que sella la madera y evita la putrefacción.</p>
+      </div>
+
+      <div class="pregunta-item">
+        <h3 class="animar pregunta">¿Cómo se pueden personalizar los marcos?</h3>
+        <p class="animar respuesta">Gracias a la cortadora láser; si se baja la intensidad del calor, se pueden hacer grabados en las patillas, como nombres o dibujos simples.</p>
+      </div>
+
+      <!-- Ahora la Pregunta 3 está ADENTRO -->
+      <div class="pregunta-item">
+        <h3 class="animar pregunta">¿Qué tan ecológicos son los marcos?</h3>
+        <p class="animar respuesta">Son extremadamente ecológicos, ya que al estar fabricados con madera, facilitan la biodegradación.</p>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<section id="planos" class="planos">
+  <h2 class="animar">Planos</h2>
+  <div class="productos-grid">
+    <div class="producto animar"><div class="imagen"><img src="2025-11-15_01.21.01.png"></div></div>
+    <div class="producto animar"><img src="2025-11-14_16.04.32.png"></div>
+    <div class="producto animar"><img src="2025-11-14_15.57.45.png"></div>
+    
+  </div>
+</section>
+
+<!-- CHAT BOT -->
+<input type="checkbox" id="chat-toggle">
+<label for="chat-toggle" class="chat-boton">💬</label>
+
+<div class="chat-caja">
+  <div class="chat-header">Wood Frame Bot</div>
+  <div class="chat-body" id="chat-body">
+    <div class="msg bot">Hola, Soy Wood Bot. ¿En qué te puedo ayudar? (Misión, Visión, Precios, etc.)</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="chat-input-text" placeholder="Escribe tu duda..." onkeypress="if(event.key === 'Enter') enviarMensaje()">
+    <button onclick="enviarMensaje()">Enviar</button>
+  </div>
+</div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modalCompra">
+  <div class="modal-content">
+    <button class="cerrar-modal" onclick="cerrarModal()">×</button>
+    <h2>Excelente elección</h2>
+    <p>Para brindarte una atención personalizada y finalizar tu compra del modelo <span id="producto-nombre" style="color:#c49a6c"></span>, comunícate con nosotros al:</p>
+    <p style="font-size: 1.5rem; font-weight: bold;">+57 320 400 5807</p>
+    <a href="#" id="link-whatsapp" target="_blank" class="btn-whatsapp">
+      Escribir por WhatsApp
+    </a>
+  </div>
+</div>
+<footer class="footer-sitio">
+  <div class="footer-contenido">
+    
+    <!-- Columna 1: Créditos -->
+    <div class="footer-seccion">
+      <h3>Créditos</h3>
+      <p>Diseñado y desarrollado por: <strong>Wood Frame</strong></p>
+      <p>CEO: Nicolas Joya</p>
+      <p>CFO: Nicolas Pineda</p>
+      <p>CCC: Daivier Cardenas</p>
+    </div>
+
+    <!-- Columna 2: Contacto -->
+    <div class="footer-seccion">
+      <h3>Contacto</h3>
+      <p>Teléfono: <a href="tel:+573204005807">+57 320 400 5807</a></p>
+      <p>Correo: <a href="gmail:nico.joya2010@gmail.com">nico.joya2010@gmail.com</a></p>
+    </div>
+
+    <!-- Columna 3: Redes o Info Extra -->
+    <div class="footer-seccion">
+      <h3>Ubicación</h3>
+      <p>Bogotá, Colombia</p>
+      <p>© 2026 Todos los derechos reservados</p>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+    // --- LOGICA MODAL ---
+const modal = document.getElementById('modalCompra');
+const nombreProd = document.getElementById('producto-nombre');
+const linkWhatsapp = document.getElementById('link-whatsapp');
+
+function abrirModal(nombre) {
+  const numero = "573204005807"; // CAMBIA ESTE NUMERO (Sin espacios ni signos)
+  const mensaje = encodeURIComponent(`Hola Wood Frame! Me interesa comprar el modelo: ${nombre}.`);
+  
+  nombreProd.innerText = nombre;
+  linkWhatsapp.href = `https://wa.me/573204005807?text=Hola,%20me%20interesa%20el%20Marco%20Minimalista%20de%20Bambú`;
+  modal.style.display = 'flex';
+}
+
+function cerrarModal() {
+  modal.style.display = 'none';
+}
+
+// Cerrar modal si hace clic fuera de la caja
+window.onclick = function(event) {
+  if (event.target == modal) cerrarModal();
+}
+// --- LOGICA DE APARICIÓN DE CONTENIDO (Intersection Observer) ---
+const observerOptions = { threshold: 0.2 };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.animar').forEach(el => observer.observe(el));
+
+
+// --- LOGICA DEL CHAT BOT ---
+const chatBody = document.getElementById("chat-body");
+const chatInput = document.getElementById("chat-input-text");
+
+function enviarMensaje() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    chatInput.value = "";
+    
+    setTimeout(() => botReply(text.toLowerCase()), 600);
+}
+
+function addMessage(text, type) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${type}`;
+    // No pongas msg.innerText aquí, déjalo vacío para la animación
+    chatBody.appendChild(msg);
+
+    if (type === "bot") {
+        escribirTexto(msg, text, 20); 
+    } else {
+        msg.innerText = text;
+    }
+
+    // El scroll debe ejecutarse después de que el mensaje existe
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function escribirTexto(elemento, texto, velocidad) {
+    let i = 0;
+    elemento.innerText = ""; // Asegura que empiece vacío
+    let intervalo = setInterval(() => {
+        if (i < texto.length) {
+            elemento.innerText += texto.charAt(i);
+            i++;
+            // Mantiene el scroll abajo mientras escribe para que no se pierda el texto
+            chatBody.scrollTop = chatBody.scrollHeight;
+        } else {
+            clearInterval(intervalo);
+        }
+    }, velocidad);
+}
+
+
+
+function botReply(text) {
+    let respuesta = "No entendí eso, ¿puedes preguntar por nuestra misión, precios u organigrama?";
+
+    if (text.includes("hola")) {
+        respuesta = "Hola, Soy el asistente de Wood Frame. ¿Que informacion necesitas? Te puedo ayudar con la mision, vision, precios de los diseños, el organigrama y la problematica";
+    } else if (text.includes("mision") || text.includes("misión")) {
+        respuesta = "Nuestra misión es desarrollar marcos de lentes biodegradables en madera de bambú mediante corte láser, ofreciendo una alternativa sostenible.";
+    } else if (text.includes("vision") || text.includes("visión")) {
+        respuesta = "Para 2027 buscamos ser líderes en la fabricación de marcos ecológicos funcionales.";
+    } else if (text.includes("precio") || text.includes("costo") || text.includes("cuanto vale")) {
+        respuesta = "Precios:\n• Clásico: $45.000\n• Personalizado: $55.000\n• Minimalista: $40.000";
+    } else if (text.includes("organigrama") || text.includes("ceo") || text.includes("equipo")) {
+        respuesta = "Director General: Nicolás Joya. Marketing: Daivier Cárdenas. Sistemas: Nicolás Pineda. Finanzas: Alejandro Parra.";
+    } else if (text.includes("problema") || text.includes("por que")) {
+        respuesta = "Buscamos reducir las 250 toneladas de plástico que genera la industria óptica anualmente usando materiales biodegradables.";
+    }
+
+    addMessage(respuesta, "bot");
+}
+function escribirTexto(elemento, texto, velocidad = 25) {
+  let i = 0;
+  elemento.innerText = "";
+
+  const intervalo = setInterval(() => {
+    if (i < texto.length) {
+      elemento.innerText += texto.charAt(i);
+      i++;
+      chatBody.scrollTop = chatBody.scrollHeight;
+    } else {
+      clearInterval(intervalo);
+    }
+  }, velocidad);
+}
+
+</script>
+
+</body>
+</html>
